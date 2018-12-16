@@ -4,6 +4,11 @@ import org.apache.hadoop.io.DoubleWritable;
 
 public class PrettyDoubleWritable extends DoubleWritable {
 
+
+  public PrettyDoubleWritable() {
+    super();
+  }
+
   public PrettyDoubleWritable(double value) {
     super(value);
   }
