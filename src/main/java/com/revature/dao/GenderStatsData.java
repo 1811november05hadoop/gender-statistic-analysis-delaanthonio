@@ -28,8 +28,6 @@ public class GenderStatsData {
   }
 
   public GenderStatsData(String row) {
-    // LOGGER.debug("Constructing GenderStatsData with " + row);
-
     Iterable<String> strings = Splitter.onPattern("\",\"").trimResults(CharMatcher.is('"'))
         .split(row);
     data = new ArrayList<>();

@@ -2,6 +2,7 @@ package com.revature.mapreduce;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.revature.conf.Setting;
 import com.revature.io.PrettyDoubleWritable;
 import com.revature.io.PrettyMapWritable;
 import com.revature.io.PrettySortedMapWritable;
@@ -22,7 +23,8 @@ public class IndicatorChangeMapper extends Mapper<LongWritable, Text, Text, Doub
   public static final Text COUNTRY_CODE_KEY = new Text("CountryCode");
   public static final Text INDICATOR_NAME_KEY = new Text("IndicatorName");
   public static final Text INDICATOR_CODE_KEY = new Text("IndicatorCode");
-  private static final IntWritable SINCE_YEAR = new IntWritable(2000);
+  public static final int DEFAULT_YEAR_BEGIN = 2000;
+  public static final int DEFAULT_YEAR_END = 2016;
 
   @Override
   protected void map(LongWritable key, Text value, Context context)
@@ -51,7 +53,7 @@ public class IndicatorChangeMapper extends Mapper<LongWritable, Text, Text, Doub
     final SortedMapWritable resultValue = new PrettySortedMapWritable();
 
     Configuration conf = context.getConfiguration();
-    String confIndicatorCode = conf.get("IndicatorCode");
+    String confIndicatorCode = conf.get(Setting.INDICATOR_CODE);
 
     for (int i = 1960; i <= 2016 && row.hasNext(); i++) {
       String metric = row.next();
@@ -66,15 +68,19 @@ public class IndicatorChangeMapper extends Mapper<LongWritable, Text, Text, Doub
 
     if (resultKey.get(DualYearMapper.INDICATOR_CODE_KEY).toString()
         .equals(confIndicatorCode)) {
-      IntWritable mostRecentYear = (IntWritable) resultValue.lastKey();
-      DoubleWritable beginEmploymentRate = (DoubleWritable) resultValue.get(SINCE_YEAR);
-      DoubleWritable endEmploymentRate = (DoubleWritable) resultValue.get(mostRecentYear);
-      if (beginEmploymentRate == null || endEmploymentRate == null) {
+      IntWritable yearStart =
+          new IntWritable(conf.getInt(Setting.INDICATOR_YEAR_START, DEFAULT_YEAR_BEGIN));
+      IntWritable yearEnd =
+          new IntWritable(conf.getInt(Setting.INDICATOR_YEAR_END, DEFAULT_YEAR_END));
+      DoubleWritable indicatorBeginRate = (DoubleWritable) resultValue.get(yearStart);
+      DoubleWritable indicatorEndRate =
+          (DoubleWritable) resultValue.get(yearEnd);
+      if (indicatorBeginRate == null || indicatorEndRate == null) {
         return;
       }
-      DoubleWritable employmentDifference = new PrettyDoubleWritable(
-          endEmploymentRate.get() - beginEmploymentRate.get());
-      context.write(countryName, employmentDifference);
+      DoubleWritable indicatorDifference = new PrettyDoubleWritable(
+          indicatorEndRate.get() - indicatorBeginRate.get());
+      context.write(countryName, indicatorDifference);
     }
   }
 }
