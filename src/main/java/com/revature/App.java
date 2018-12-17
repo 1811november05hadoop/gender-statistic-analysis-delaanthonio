@@ -65,6 +65,7 @@ public class App {
     job.setMapOutputValueClass(DoubleWritable.class);
     String jobName = "Unknown";
 
+    conf = job.getConfiguration();
     switch (jobNumber) {
       case FEMALE_GRADUATION_JOB:
         mapperClass = FemaleGraduateMapper.class;
