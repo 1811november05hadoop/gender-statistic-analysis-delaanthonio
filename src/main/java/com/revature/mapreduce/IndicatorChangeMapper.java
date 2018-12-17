@@ -3,6 +3,7 @@ package com.revature.mapreduce;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.revature.conf.Setting;
+import com.revature.dao.GenderStatsData.Key;
 import com.revature.io.PrettyDoubleWritable;
 import com.revature.io.PrettyMapWritable;
 import com.revature.io.PrettySortedMapWritable;
@@ -19,10 +20,6 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 public class IndicatorChangeMapper extends Mapper<LongWritable, Text, Text, DoubleWritable> {
 
-  public static final Text COUNTRY_NAME_KEY = new Text("CountryName");
-  public static final Text COUNTRY_CODE_KEY = new Text("CountryCode");
-  public static final Text INDICATOR_NAME_KEY = new Text("IndicatorName");
-  public static final Text INDICATOR_CODE_KEY = new Text("IndicatorCode");
   public static final int DEFAULT_YEAR_BEGIN = 2000;
   public static final int DEFAULT_YEAR_END = 2016;
 
@@ -45,10 +42,10 @@ public class IndicatorChangeMapper extends Mapper<LongWritable, Text, Text, Doub
     Text indicatorCode = new Text(row.next());
 
     final MapWritable resultKey = new PrettyMapWritable();
-    resultKey.put(COUNTRY_NAME_KEY, countryName);
-    resultKey.put(COUNTRY_CODE_KEY, countryCode);
-    resultKey.put(INDICATOR_NAME_KEY, indicatorName);
-    resultKey.put(INDICATOR_CODE_KEY, indicatorCode);
+    resultKey.put(Key.COUNTRY_NAME, countryName);
+    resultKey.put(Key.COUNTRY_CODE, countryCode);
+    resultKey.put(Key.INDICATOR_NAME, indicatorName);
+    resultKey.put(Key.INDICATOR_CODE, indicatorCode);
 
     final SortedMapWritable resultValue = new PrettySortedMapWritable();
 
@@ -66,7 +63,7 @@ public class IndicatorChangeMapper extends Mapper<LongWritable, Text, Text, Doub
       return;
     }
 
-    if (resultKey.get(DualYearMapper.INDICATOR_CODE_KEY).toString()
+    if (resultKey.get(Key.INDICATOR_CODE).toString()
         .equals(confIndicatorCode)) {
       IntWritable yearStart =
           new IntWritable(conf.getInt(Setting.INDICATOR_YEAR_START, DEFAULT_YEAR_BEGIN));

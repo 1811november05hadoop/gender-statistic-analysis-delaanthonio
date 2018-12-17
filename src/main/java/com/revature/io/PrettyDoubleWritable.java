@@ -14,7 +14,20 @@ public class PrettyDoubleWritable extends DoubleWritable {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (!super.equals(o)) {
+      return false;
+    }
+    return Math.abs(get() - ((DoubleWritable) o).get()) < 0.000000001;
+  }
+
+  @Override
+  public int hashCode() {
+    return super.hashCode();
+  }
+
+  @Override
   public String toString() {
-    return String.format("%3.1f", get());
+    return String.format("%s%3.1f", get() > 0 ? "+" : "", get());
   }
 }

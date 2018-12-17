@@ -1,6 +1,7 @@
 package com.revature;
 
 import com.revature.dao.GenderStatsData;
+import com.revature.io.PrettyDoubleWritable;
 import com.revature.mapreduce.FemaleGraduateMapper;
 import java.io.IOException;
 import org.apache.hadoop.io.DoubleWritable;
@@ -41,7 +42,7 @@ public class WhenMappingFemaleEmploymentRate {
     mapperInputKey = new LongWritable(4);
     mapperInputValue = new Text(row);
     mapperOutputKey = new Text("Arab World");
-    mapperOutputValue = new DoubleWritable(0.1);
+    mapperOutputValue = new PrettyDoubleWritable(0.1);
 
     mapDriver
         .withInput(mapperInputKey, mapperInputValue)
