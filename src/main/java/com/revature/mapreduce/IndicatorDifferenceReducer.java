@@ -22,6 +22,16 @@ public class IndicatorDifferenceReducer extends
   private static final int YEAR_END = 2015;
 
   @Override
+  protected void setup(Context context) throws IOException, InterruptedException {
+    super.setup(context);
+    Configuration conf = context.getConfiguration();
+    String primaryIndicatorCode = conf.get(Setting.INDICATOR_CODE);
+    String secondaryIndicatorCode = conf.get(Setting.INDICATOR_CODE_SECONDARY);
+    LOGGER.debug("Indicator code: " + primaryIndicatorCode);
+    LOGGER.debug("Secondary Indicator code: " + secondaryIndicatorCode);
+  }
+
+  @Override
   protected void reduce(Text country, Iterable<MapWritable> values, Context context)
       throws IOException, InterruptedException {
     Configuration conf = context.getConfiguration();
@@ -68,7 +78,6 @@ public class IndicatorDifferenceReducer extends
     }
     if (!indicatorDifferenceMap.isEmpty()) {
       context.write(new Text(country), indicatorDifferenceMap);
-      LOGGER.info("Successfully reduced data");
     }
   }
 }

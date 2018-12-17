@@ -23,6 +23,16 @@ public class DualIndicatorMapper extends Mapper<LongWritable, Text, Text, MapWri
   private static final Logger LOGGER = Logger.getLogger(DualIndicatorMapper.class);
 
   @Override
+  protected void setup(Context context) throws IOException, InterruptedException {
+    super.setup(context);
+    Configuration conf = context.getConfiguration();
+    String primaryIndicatorCode = conf.get(Setting.INDICATOR_CODE);
+    String secondaryIndicatorCode = conf.get(Setting.INDICATOR_CODE_SECONDARY);
+    LOGGER.debug("Indicator code: " + primaryIndicatorCode);
+    LOGGER.debug("Secondary Indicator code: " + secondaryIndicatorCode);
+  }
+
+  @Override
   protected void map(LongWritable key, Text value, Context context)
       throws IOException, InterruptedException {
 
@@ -44,9 +54,8 @@ public class DualIndicatorMapper extends Mapper<LongWritable, Text, Text, MapWri
     String primaryIndicatorCode = conf.get(Setting.INDICATOR_CODE);
     String secondaryIndicatorCode = conf.get(Setting.INDICATOR_CODE_SECONDARY);
 
-    if (!indicatorCode.toString().equals(primaryIndicatorCode)
-        && !indicatorCode.toString().equals(secondaryIndicatorCode)) {
-//      LOGGER.debug("Indicator code unmatched: " + indicatorCode);
+    if (!indicatorCode.toString().contains(primaryIndicatorCode)
+        && !indicatorCode.toString().contains(secondaryIndicatorCode)) {
       return;
     }
 
@@ -68,7 +77,6 @@ public class DualIndicatorMapper extends Mapper<LongWritable, Text, Text, MapWri
     outputMap.put(Key.INDICATOR_CODE, indicatorCode);
     outputMap.put(Key.COLUMN_YEARS, columnValues);
 
-    LOGGER.debug("Writing to context: " + countryName + " " + outputMap);
     context.write(countryName, outputMap);
   }
 }
