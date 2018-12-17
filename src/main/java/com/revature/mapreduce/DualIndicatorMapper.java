@@ -46,7 +46,7 @@ public class DualIndicatorMapper extends Mapper<LongWritable, Text, Text, MapWri
 
     if (!indicatorCode.toString().equals(primaryIndicatorCode)
         && !indicatorCode.toString().equals(secondaryIndicatorCode)) {
-      LOGGER.debug("Indicator code unmatched: " + indicatorCode);
+//      LOGGER.debug("Indicator code unmatched: " + indicatorCode);
       return;
     }
 
